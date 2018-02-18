@@ -11,7 +11,7 @@ library(tidyr)
 library(purrr)
 
 # Importa base ####
-this.dir <- dirname(parent.frame(2)$ofile)
+this.dir <- getwd()
 pos = gregexpr('/', this.dir)
 ultima_barra = unlist(pos)[length(unlist(pos))]
 
@@ -55,7 +55,7 @@ retorno_amostra_inteira = matrix(0,length(1:21),1)
 sharpe = matrix(0,length(1:21),1)
 
 
-for (jj in 5) { # 2:21
+for (jj in 2:21) { # 
   holding_period = jj
   
   # Matrizes auxiliares
@@ -63,8 +63,8 @@ for (jj in 5) { # 2:21
   pnl_surpresa_acumulado = matrix(0,nrow = nrow(df_ipca_new), ncol = (1+holding_period))
   position_surpresa = matrix(0,nrow = nrow(df_ipca_new),1)
   pnl_encadeado = matrix(0,nrow = (nrow(df_ipca_new)*holding_period), ncol = 1)
-  data_surpresa = matrix(0,nrow = nrow(df_ipca_new),1)
-  data_surpresa_diaria = matrix(0,nrow = nrow(df_ipca_new),1)
+  data_surpresa = data.frame("Data"=rep(as.Date(NA),(nrow(df_ipca_new))))
+  data_surpresa_diaria = data.frame("Data"=rep(as.Date(NA),(nrow(df_ipca_new))))
   
   # Loop backtest ####
   
@@ -74,7 +74,7 @@ for (jj in 5) { # 2:21
     pnl_surpresa[ii,] = position_surpresa[ii,1] * ret[(local+1):(local+holding_period)]
     pnl_surpresa_acumulado[ii,2:ncol(pnl_surpresa_acumulado)] = cumsum(pnl_surpresa[ii,])
     # check de datas
-    data_surpresa[ii,1] = as.Date(df_ipca_new$data_mensal[ii])
+    data_surpresa$Data[ii] = df_ipca_new$data_mensal[ii]
     data_surpresa_diaria[ii,1] = df_swap$data_diaria[local]
     }
   
@@ -92,20 +92,12 @@ for (jj in 5) { # 2:21
 
 # Relatórios ####
 
-df_pnl = data.frame("PnL" = t(pnl_surpresa_acumulado[inicio:fim,]))
-df_pnl_plot = gather(df_pnl,Evento,Valor)
-df_pnl_plot = cbind(df_pnl_plot,rep(rownames(df_pnl),NCOL(df_pnl)))
-colnames(df_pnl_plot) = c("Evento","RetornoAc.","Dia")
-df_pnl_plot$Dia = as.numeric(df_pnl_plot$Dia)
-df_pnl_plot$RetornoAc. = factor(df_pnl_plot$RetornoAc., 
-                                levels=df_pnl_plot$RetornoAc[order(df_pnl_plot$Dia)])
-df_pnl_plot$RetornoAc. = as.numeric(df_pnl_plot$RetornoAc.)
+matplot(t(pnl_surpresa_acumulado[inicio:fim,]), type = 'l', 
+        lty = 1, color = "black", xlab = "Dias", ylab = "Retorno Acumulado", 
+        main = "Trajetórias por release")
 
-# ggplot(df_pnl_plot, aes(x = Dia, y = RetornoAc., group = Evento)) + geom_line()
+hist(pnl_surpresa_acumulado[inicio:fim,ncol(pnl_surpresa_acumulado)], 
+     main = "Distribuição por release do IPCA", xlab = "PnL Acumulado")
 
-# ggplot(df_pnl_plot, aes(explanatory, response, group = replicate)) + 
-  # geom_point() + geom_smooth(method="lm", se = FALSE)
 
-# df_sharpe = data.frame("Sharpe" = sharpe)
-# ggplot(df_sharpe, aes(sharpe) + geom_density(alpha = 0.3, fill = "blue") + theme_bw()
 
