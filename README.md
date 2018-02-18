@@ -5,6 +5,7 @@ Estudo sistemátcio do contraro de Contrato Futuro de Cupom de IPCA (“DAP”) 
 to do:
 - Acertar lado da surpresa do IPCA
 - Persistência da surpresa do IPCA & IPCA-15
+  - Muda a tendência do DAP quando tem surpresa p/ lados diferentes?
 - Sazonalidade da inflação
 - Hedge da estratégia em relação a moeda e ao petróleo
 - Impacto da coleta na variação diária
