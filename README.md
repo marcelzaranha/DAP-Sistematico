@@ -1,6 +1,6 @@
 # DAP-Sistematico
 
-Estudo sistemátcio do contraro de Contrato Futuro de Cupom de IPCA (“DAP”) da BM&FBOVESPA (WLA Index)
+Estudo sistemátcio do Contrato Futuro de Cupom de IPCA (“DAP”) da BM&FBOVESPA (WLA Index)
 
 to do:
 - Acertar lado da surpresa do IPCA
