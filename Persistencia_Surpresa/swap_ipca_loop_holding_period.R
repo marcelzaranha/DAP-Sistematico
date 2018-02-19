@@ -3,12 +3,8 @@
 # Limpa workspace
 rm(list=ls())
 
-library(ggplot2)
 library(readxl)
-library(quantmod)
 library(dplyr)
-library(tidyr)
-library(purrr)
 
 # Importa base ####
 this.dir <- getwd()
@@ -50,7 +46,7 @@ ret = c(0,diff(log(df_swap$Swap)))
 
 # Parâmetros ####
 inicio = min(which(df_ipca_new$data_mensal > df_swap$data_diaria[1]))
-fim = nrow(df_ipca_new)-2
+fim = nrow(df_ipca_new)-1
 retorno_amostra_inteira = matrix(0,length(1:21),1)
 sharpe = matrix(0,length(1:21),1)
 
@@ -99,5 +95,18 @@ matplot(t(pnl_surpresa_acumulado[inicio:fim,]), type = 'l',
 hist(pnl_surpresa_acumulado[inicio:fim,ncol(pnl_surpresa_acumulado)], 
      main = "Distribuição por release do IPCA", xlab = "PnL Acumulado")
 
+# Excluindo outliers
+x = pnl_surpresa_acumulado[inicio:fim,ncol(pnl_surpresa_acumulado)]
+qnt = quantile(x, probs=c(.25, .75), na.rm = TRUE)
+H = 1.5 * IQR(x, na.rm = TRUE)
+y = x
+y[x < (qnt[1] - H)] <- NA
+y[x > (qnt[2] + H)] <- NA
 
+hist(y,breaks = seq(from = -0.15, to = 0.15, by = 0.025),
+     main = "Distribuição por release do IPCA ex-outliers", 
+     xlab = "PnL Acumulado")
+
+(retorno_medio = mean(pnl_surpresa_acumulado[inicio:fim,ncol(pnl_surpresa_acumulado)],na.rm = TRUE))
+(retorno_medio_exoutlier = mean(y,na.rm = TRUE))
 
