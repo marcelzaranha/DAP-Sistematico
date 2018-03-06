@@ -76,7 +76,20 @@ for (ii in inicio:fim){
   ea_forecast[ii,1] = abs(df_analistas$Actual[ii] - forecast_ipca[ii,1])
 }
 
+# Relatórios ####
 (mean(ea_forecast[inicio:fim], na.rm = TRUE))
 (mean((abs(surpresa[inicio:fim,1])), na.rm = TRUE))
 
+# monta data.frame c/ resultados
+df_forecast_ipca = data.frame("Forecast_Analistas" = forecast_ipca)
+df_forecast = bind_cols(df_analistas[,1:3],df_analistas[,ncol(df_analistas)]) %>%
+  bind_cols(df_forecast_ipca)
+
+# Gráficos...
+# EA ao longo do tempo forecast vs consenso
+# barras com distribuição do EA
+
+# salva apenas o data.frame c/ resultados
+rm(list=setdiff(ls(),"df_forecast"))
+save(df_forecast, file = "df_forecast_back.Rdata")
 
