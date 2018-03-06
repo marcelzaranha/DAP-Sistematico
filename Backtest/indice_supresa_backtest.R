@@ -94,7 +94,7 @@ inicio = 252
 fim = nrow(df_backtest_final)-1
 
 for (ii in inicio:fim){
-  position = (df_backtest_final[ii,3])
+  position = sign(df_backtest_final[ii,3])
   retorno_estrategia[ii+1] = as.numeric(position) * ret[ii+1]
 }
 
